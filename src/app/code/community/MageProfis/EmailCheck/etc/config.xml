@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<config>
+    <modules>
+        <MageProfis_EmailCheck>
+            <version>3.0.2</version>
+        </MageProfis_EmailCheck>
+    </modules>
+    <global>
+        <models>
+            <mpemailcheck>
+                <class>MageProfis_EmailCheck_Model</class>
+            </mpemailcheck>
+        </models>
+    </global>
+    <crontab>
+        <jobs>
+            <mpemailcheck>
+                <schedule>
+                    <cron_expr>*/15 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>mpemailcheck/observer::sendOrderEmail</model>
+                </run>
+            </mpemailcheck>
+        </jobs>
+    </crontab>
+</config>
