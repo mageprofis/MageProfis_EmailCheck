@@ -11,7 +11,12 @@ class MageProfis_EmailCheck_Model_Observer
         $dateTo = date('Y-m-d H:i:s', strtotime('-15 min'));
         $collection = Mage::getModel('sales/order')->getCollection()
                 ->addFieldToSelect(array('entity_id'))
-                ->addFieldToFilter('email_sent', 0)
+                ->addFieldToFilter('email_sent',
+                    array(
+                        array('eq'   => 0 ), 
+                        array('null' => true )
+                    )
+                )
                 ->addFieldToFilter('state', array('in' => $this->_orderStates))
                 ->addFieldToFilter('created_at', array(
                     'from' => $dateFrom,
