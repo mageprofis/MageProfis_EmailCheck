@@ -22,12 +22,26 @@ class MageProfis_EmailCheck_Model_Observer
                     'from' => $dateFrom,
                     'to' => $dateTo,
                 ))
+                ->setOrder('store_id', 'ASC')
         ;
+        $storeId = null;
+        $appEmulation = Mage::getSingleton('core/app_emulation');
+        $initialEnvironmentInfo = null;
         foreach($collection->getAllIds() as $_id)
         {
             $order = Mage::getModel('sales/order')->load($_id);
             /** @var Mage_Sales_Model_Order $order */
-            
+
+            if(is_null($storeId))
+            {
+                $initialEnvironmentInfo = $appEmulation->startEnvironmentEmulation($storeId);
+            } elseif($storeId != $order->getStoreId())
+            {
+                $appEmulation->stopEnvironmentEmulation($initialEnvironmentInfo);
+                $initialEnvironmentInfo = $appEmulation->startEnvironmentEmulation($order->getStoreId());
+            }
+            $storeId = $order->getStoreId();
+
             // get next item, if email_sent is set or state has been changed!
             if( (int) $order->getEmailSent() == 1 && !in_array($order->getSate(), $this->_orderStates))
             {
@@ -52,6 +66,10 @@ class MageProfis_EmailCheck_Model_Observer
             {
                 Mage::log('Error While Sending E-Mail: '. $order->getIncrementId(), null, 'orderemail.log', true);
             }
+        }
+        if(!is_null($storeId))
+        {
+            $appEmulation->stopEnvironmentEmulation($initialEnvironmentInfo);
         }
     }
 }
