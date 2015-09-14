@@ -53,7 +53,12 @@ class MageProfis_EmailCheck_Model_Observer
             if($payment && $payment->getId())
             {
                 $instance = $payment->getMethodInstance();
+                // continue on some payment methods
                 if($instance && in_array($instance->getCode(), array('paypal_standard', 'paypal_express', 'hpcc', 'hpsu')) && $order->getState() != 'processing')
+                {
+                    continue;
+                // continue on payone payments
+                } elseif($instance && strstr($instance->getCode(), 'payone') && $order->getState() != 'processing')
                 {
                     continue;
                 }
