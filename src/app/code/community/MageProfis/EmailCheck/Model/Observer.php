@@ -34,7 +34,7 @@ class MageProfis_EmailCheck_Model_Observer
 
             if(is_null($storeId))
             {
-                $initialEnvironmentInfo = $appEmulation->startEnvironmentEmulation($storeId);
+                $initialEnvironmentInfo = $appEmulation->startEnvironmentEmulation($order->getStoreId());
             } elseif($storeId != $order->getStoreId())
             {
                 $appEmulation->stopEnvironmentEmulation($initialEnvironmentInfo);
